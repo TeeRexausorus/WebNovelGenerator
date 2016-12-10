@@ -1,3 +1,4 @@
+mkdir input
 for j in `seq 1 16`; do
     i=1;
     k=1;
