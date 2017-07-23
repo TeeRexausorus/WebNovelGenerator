@@ -18,5 +18,3 @@ function dl {
 
 	fi
     done
-
-#for i in `seq 1 280`; do echo $i; done

@@ -17,7 +17,7 @@ def createBook(id, title, language, author, chapMin, chapMax, filenameSuffixe, b
     book.set_language(language)
     book.add_author(author)
 
-    book.set_cover("image.jpg", open('cover.jpg', 'rb').read())
+    #book.set_cover("image.jpg", open('cover.jpg', 'rb').read())
     book.spine = ['cover']
     for i in range(chapMin, chapMax+1):
         filename = filenameSuffixe + str(i)
@@ -55,5 +55,5 @@ def createBook(id, title, language, author, chapMin, chapMax, filenameSuffixe, b
     epub.write_epub(bookname+'.epub', book, {})
     
 if __name__ == '__main__':
-    createBook('atg1234', 'Against The Gods', 'en', 'Wuxia World', 740, 761, 'atg-chapter-', 'Against The Gods_small')
+    createBook('atg1234', 'Against The Gods', 'en', 'Wuxia World', 1, 814, 'atg-chapter-', 'Against The Gods_small')
 

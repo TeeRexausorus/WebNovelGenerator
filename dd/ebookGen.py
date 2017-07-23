@@ -7,6 +7,13 @@ import os
 reload(sys)
 sys.setdefaultencoding('utf8')
 
+def chap_num_fomatter(chap_num):
+    if(chap_num < 10):
+        return "00" + str(chap_num)
+    if(chap_num < 100):
+        return "0" + str(chap_num)
+    return str(chap_num)
+
 def createBook(id, title, language, author, chapMin, chapMax, filenameSuffixe):
     #lstFiles = []
     lstChaps = []
@@ -19,7 +26,7 @@ def createBook(id, title, language, author, chapMin, chapMax, filenameSuffixe):
     #book.set_cover("image.jpg", open('cover.jpg', 'rb').read())
     book.spine = ['cover', 'nav']
     for i in range(chapMin, chapMax+1):
-        filename = filenameSuffixe + str(i)
+        filename = filenameSuffixe + chap_num_fomatter(i)
         #print filename
         f = open('input/'+filename, 'r')
         strFile = f.read()
