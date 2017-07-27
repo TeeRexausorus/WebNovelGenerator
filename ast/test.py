@@ -4,7 +4,7 @@ from ebooklib import epub
 import HTMLParser
 import os
 import os.path
-
+from lxml import html
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -27,20 +27,28 @@ def createBook(id, title, language, author, filenameSuffixe):
 	while(os.path.isfile(filename)): #j
 		filename = 'input/ast'+ '-chapter-' + str(j)
 		if (os.path.isfile(filename)):
-			print( filename)
-			f = open(''+filename, 'r')
+			#print( filename)
+			f = open(filename, 'r')
 			strFile = f.read()
 			#print '>' + strFile
 			f.close()
-			m = re.search('<hr ?\/?>((.|\n)*?)(?=<a)', strFile)
+			#m = re.search('<hr ?\/?>((.|\n)*?)(?=<a)', strFile)
 			h = HTMLParser.HTMLParser()
-			strAlmostClean = h.unescape(m.group(1))
-			strAlmostClean.decode('utf-8')
+			strFile = h.unescape(strFile)
+                        #print strFile
+                        tree = html.fromstring(strFile)
+                        strClean = "<h1>" + tree.xpath("//p/strong//text()")[0] + "</h1>"
+                        for s in tree.xpath("//div[@id='chapterContent']//text()"):
+                                if s != "\n":
+                                        strClean += "<p>" + s.strip() + "</p>"
+                                #.join(tree.xpath("//div[@id='chapterContent']//text()"))
+                        #print strClean
+                        #strAlmostClean.decode('utf-8')
 			if (flag==1):
 				flag = 0
-			c = epub.EpubHtml(title='Chapitre ' + str(j)+'-'+str(k), file_name=filename + '.xhtml', lang='hr')
+                        c = epub.EpubHtml(title='Chapitre ' + str(j)+'-'+str(k), file_name=filename + '.xhtml', lang='hr')
 			#lstFiles.append(filename+'.xhtml')
-			c.content=strAlmostClean
+			c.content=strClean
 			book.add_item(c)
 			lstChaps.append(c)
 			#book.spine =book.spine + ['Chapitre ' + str(i), c]
@@ -49,6 +57,7 @@ def createBook(id, title, language, author, filenameSuffixe):
 			# define CSS style
 			k = k + 1
 			#end of if
+                        #return
 		j = j + 1
 		filename = 'input/ast-chapter-'+str(j)
 			#end of while j loop
