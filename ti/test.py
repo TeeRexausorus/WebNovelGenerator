@@ -20,7 +20,7 @@ def createBook(id, title, language, author, filenameSuffixe):
     #book.set_cover("image.jpg", open('cover.jpg', 'rb').read())
     book.spine = ['cover', 'nav']
     flag = 1
-    for i in range(15, 20):
+    for i in range(1, 21):
         j = 1
         k = 1
         filename = 'input/ti-vol-' + str(i) + '-chapter-' + str(j) + '-' + str(k)
