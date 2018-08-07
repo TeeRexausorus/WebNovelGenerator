@@ -5,11 +5,19 @@ import HTMLParser
 import os
 import os.path
 
+def generateUrl(base, i,j,k):
+	ret = base + str(i) + '-chapter-' + str(j) + '-'
+	if k < 10:
+		ret = ret + '0'
+	ret = ret + str(k)
+	return ret
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 
 def createBook(id, title, language, author, filenameSuffixe):
     #lstFiles = []
+    pageName = 'input/hjc-book-'
     lstChaps = []
     #lstFiles.sort()
     book = epub.EpubBook()
@@ -20,42 +28,48 @@ def createBook(id, title, language, author, filenameSuffixe):
     #book.set_cover("image.jpg", open('cover.jpg', 'rb').read())
     book.spine = ['cover', 'nav']
     flag = 1
+    i = 1
     j = 1
     k = 1
-    filename = 'input/hjc'+ '-chapter-' + str(j) + '-' + str(k)
+    filename = generateUrl(pageName, i, j, k)
     #print 'for ' + filename
-    while(os.path.isfile(filename)): #j
-        while(os.path.isfile(filename)): #k
-            filename = 'input/hjc'+ '-chapter-' + str(j) + '-' + str(k)
-            if (os.path.isfile(filename)):
-                print( filename)
-                f = open(''+filename, 'r')
-                strFile = f.read()
-                #print '>' + strFile
-                f.close()
-                m = re.search('<hr ?\/?>((.|\n)*?)(?=<hr)', strFile)
-                h = HTMLParser.HTMLParser()
-                strAlmostClean = h.unescape(m.group(1))
-                strAlmostClean.decode('utf-8')
-                if (flag==1):
-                    flag = 0
-                c = epub.EpubHtml(title='Chapitre ' + str(j)+'-'+str(k), file_name=filename + '.xhtml', lang='hr')
-                #lstFiles.append(filename+'.xhtml')
-                c.content=strAlmostClean
-                book.add_item(c)
-                lstChaps.append(c)
-                #book.spine =book.spine + ['Chapitre ' + str(i), c]
-                book.spine =book.spine + [c]
-                #print book.spine
-                # define CSS style
-                k = k + 1
-                #end of if
-            #end of while k loop
-        k = 1
-        j = j + 1
-        filename = 'input/hjc-chapter-' + str(j) + '-' + str(k)
-            #end of while j loop
-    #end of for loop
+
+    while(os.path.isfile(filename)): #i
+        while(os.path.isfile(filename)): #j
+            while(os.path.isfile(filename)): #k
+                filename = generateUrl(pageName, i, j, k)
+                if (os.path.isfile(filename)):
+                    print( filename)
+                    f = open(''+filename, 'r')
+                    strFile = f.read()
+                    #print '>' + strFile
+                    f.close()
+                    m = re.search('<h4 class=".*" ?\/?>((.|\n)*?)(?=Previous Chapter)', strFile)
+                    h = HTMLParser.HTMLParser()
+                    strAlmostClean = h.unescape(m.group(1))
+                    strAlmostClean.decode('utf-8')
+                    if (flag==1):
+                        flag = 0
+                    c = epub.EpubHtml(title='Chapitre ' + str(j)+'-'+str(k), file_name=filename + '.xhtml', lang='hr')
+                    #lstFiles.append(filename+'.xhtml')
+                    c.content=strAlmostClean
+                    book.add_item(c)
+                    lstChaps.append(c)
+                    #book.spine =book.spine + ['Chapitre ' + str(i), c]
+                    book.spine =book.spine + [c]
+                    #print book.spine
+                    # define CSS style
+                    k = k + 1
+                    #end of if
+                #end of while k loop
+            k = 1
+            j = j + 1
+            filename = generateUrl(pageName, i, j, k)
+                #end of while j loop
+        i = i + 1
+        filename = generateUrl(pageName, i, j, k)
+
+        #end of for loop
     book.toc = lstChaps
     #print book.toc
 
